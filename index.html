@@ -22,14 +22,17 @@
         });
         
         // Handle response from the backend
+	alert("Response status:", response.status);
         const result = await response.text();
+	alert("Server response:", result);
+
         if (response.ok) {
           alert("QR Code submitted successfully!");
         } else {
           alert("Failed to submit QR Code. Server returned: " + result);
         }
       } catch (error) {
-        console.error("Error:", error);
+        alert("Error:", error);
         alert("An error occurred while submitting the QR Code.");
       }
     }
