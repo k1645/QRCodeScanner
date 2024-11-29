@@ -9,38 +9,57 @@
 <body>
   <h2>Scan QR Code</h2>
   <div id="reader" style="width:300px;"></div>
+
   <script>
-    function sendQRCodeData(data) {
-      fetch("http://localhost:8080/magikservices/api/qr/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(response => response.text())
-      .then(result => alert("QR Code submitted successfully!"))
-      .catch(error => console.error("Error:", error));
+    async function sendQRCodeData(data) {
+      try {
+        // Sending the decoded QR code data to the backend
+        const response = await fetch("http://localhost:8080/magikservices/api/qr/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ qrData: data }) // Sending the data as an object
+        });
+        
+        // Handle response from the backend
+        const result = await response.text();
+        if (response.ok) {
+          alert("QR Code submitted successfully!");
+        } else {
+          alert("Failed to submit QR Code. Server returned: " + result);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while submitting the QR Code.");
+      }
     }
 
-   document.addEventListener("DOMContentLoaded", () => {
-    console.log("Initializing QR Code scanner...");
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("Initializing QR Code scanner...");
 
-    const html5QrCode = new Html5Qrcode("reader");
+      const html5QrCode = new Html5Qrcode("reader");
 
-    html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      (decodedText) => {
-        console.log("Scanned:", decodedText);
-        alert("Scanned: " + decodedText);
-        sendQRCodeData(decodedText);
-        // Send data to backend if needed
-        html5QrCode.stop();
-      },
-      (errorMessage) => {
-        console.warn("QR Code scan error:", errorMessage);
-      }
-    );
-  });
+      html5QrCode.start(
+        { facingMode: "environment" }, // Using rear camera
+        { fps: 10, qrbox: 250 },
+        async (decodedText) => {
+          console.log("Scanned:", decodedText);
+          alert("Scanned: " + decodedText);
+
+          // Send data to the backend
+          await sendQRCodeData(decodedText);
+
+          // Stop the QR code scanner after scanning
+          html5QrCode.stop().then(() => {
+            console.log("QR Code scanner stopped successfully.");
+          }).catch((error) => {
+            console.error("Error stopping QR code scanner:", error);
+          });
+        },
+        (errorMessage) => {
+          console.warn("QR Code scan error:", errorMessage);
+        }
+      );
+    });
   </script>
 </body>
 </html>
