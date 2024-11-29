@@ -32,6 +32,7 @@
       (decodedText) => {
         console.log("Scanned:", decodedText);
         alert("Scanned: " + decodedText);
+        sendQRCodeData(decodedText);
         // Send data to backend if needed
         html5QrCode.stop();
       },
