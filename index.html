@@ -15,7 +15,7 @@
       try {
 	  alert("data"+data);
         // Sending the decoded QR code data to the backend
-        const response = await fetch("http://localhost:8080/magikservices/api/qr/submit", {
+        const response = await fetch("http://172.20.10.9:8080/magikservices/api/qr/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ qrData: data }) // Sending the data as an object
