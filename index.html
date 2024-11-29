@@ -21,19 +21,25 @@
       .catch(error => console.error("Error:", error));
     }
 
+   document.addEventListener("DOMContentLoaded", () => {
+    console.log("Initializing QR Code scanner...");
+
     const html5QrCode = new Html5Qrcode("reader");
+
     html5QrCode.start(
-      { facingMode: "environment" }, // Use rear camera
+      { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
       (decodedText) => {
         console.log("Scanned:", decodedText);
-        sendQRCodeData(decodedText); // Send scanned value to backend
+        alert("Scanned: " + decodedText);
+        // Send data to backend if needed
         html5QrCode.stop();
       },
       (errorMessage) => {
         console.warn("QR Code scan error:", errorMessage);
       }
     );
+  });
   </script>
 </body>
 </html>
