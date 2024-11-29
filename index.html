@@ -13,6 +13,7 @@
   <script>
     async function sendQRCodeData(data) {
       try {
+	  alert("data"+data);
         // Sending the decoded QR code data to the backend
         const response = await fetch("http://localhost:8080/magikservices/api/qr/submit", {
           method: "POST",
@@ -50,8 +51,10 @@
 
           // Stop the QR code scanner after scanning
           html5QrCode.stop().then(() => {
+		  alert("Scanned: QR Code scanner stopped successfully.");
             console.log("QR Code scanner stopped successfully.");
           }).catch((error) => {
+		  alert("Error stopping QR code scanner:", error);
             console.error("Error stopping QR code scanner:", error);
           });
         },
