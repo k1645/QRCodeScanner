@@ -18,7 +18,7 @@
         // Sending the decoded QR code data to the backend
        const payload = { qrData: data };
     alert("Payload: " + JSON.stringify(payload));
-    const response = await axios.post("http://172.20.10.9:8080/magikservices/api/qr/submit", payload, {
+    const response = await axios.post("https://172.20.10.9:8080/magikservices/api/qr/submit", payload, {
         headers: {
             "Content-Type": "application/json"
         }
