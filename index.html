@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobile QR Scanner</title>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
@@ -16,7 +17,7 @@
 	  alert("preapred data to send "+data);
         // Sending the decoded QR code data to the backend
        const payload = { qrData: data };
-    alert("Payload: " + payload);
+    alert("Payload: " + JSON.stringify(payload));
     const response = await axios.post("http://172.20.10.9:8080/magikservices/api/qr/submit", payload, {
         headers: {
             "Content-Type": "application/json"
