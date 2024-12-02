@@ -4,33 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobile QR Scanner</title>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
   <h2>Scan QR Code</h2>
   <div id="reader" style="width:300px;"></div>
-  <br>
-  <label for="fileInput">Upload QR Code Image:</label>
-  <input type="file" id="fileInput" accept="image/*">
-  <br><br>
 
   <script>
     async function sendQRCodeData(data) {
       try {
-        alert("Prepared data to send: " + data);
+	  alert("data"+data);
         // Sending the decoded QR code data to the backend
-        const payload = { qrData: data };
-        alert("Payload: " + JSON.stringify(payload));
-        const response = await axios.post("http://172.20.10.9:8080/magikservices/api/qr/submit", payload, {
-          headers: {
-            "Content-Type": "application/json"
-          }
+        const response = await fetch("http://172.20.10.9:8080/magikservices/api/qr/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ qrData: data }) // Sending the data as an object
         });
-        alert("Response status: " + response.status);
-        alert("QR Code submitted successfully!");
+        
+        // Handle response from the backend
+	alert("Response status:", response.status);
+        const result = await response.text();
+	alert("Server response:", result);
+
+        if (response.ok) {
+          alert("QR Code submitted successfully!");
+        } else {
+          alert("Failed to submit QR Code. Server returned: " + result);
+        }
       } catch (error) {
-        alert(`Error occurred: ${error.message}`);
+        alert("Error:", error);
+        alert("An error occurred while submitting the QR Code.");
       }
     }
 
@@ -39,7 +42,6 @@
 
       const html5QrCode = new Html5Qrcode("reader");
 
-      // Start the QR Code scanner for live video
       html5QrCode.start(
         { facingMode: "environment" }, // Using rear camera
         { fps: 10, qrbox: 250 },
@@ -52,8 +54,10 @@
 
           // Stop the QR code scanner after scanning
           html5QrCode.stop().then(() => {
+		  alert("Scanned: QR Code scanner stopped successfully.");
             console.log("QR Code scanner stopped successfully.");
           }).catch((error) => {
+		  alert("Error stopping QR code scanner:", error);
             console.error("Error stopping QR code scanner:", error);
           });
         },
@@ -61,28 +65,6 @@
           console.warn("QR Code scan error:", errorMessage);
         }
       );
-
-      // Handle QR Code image upload
-      const fileInput = document.getElementById("fileInput");
-      fileInput.addEventListener("change", async (event) => {
-        const file = event.target.files[0];
-        if (!file) {
-          alert("No file selected.");
-          return;
-        }
-
-        try {
-          const decodedText = await html5QrCode.scanFile(file, true); // Pass true to use the file path
-          console.log("Decoded from image:", decodedText);
-          alert("Decoded from image: " + decodedText);
-
-          // Send data to the backend
-          await sendQRCodeData(decodedText);
-        } catch (error) {
-          alert("Failed to decode QR Code from image: " + error.message);
-          console.error("Error decoding QR Code from image:", error);
-        }
-      });
     });
   </script>
 </body>
