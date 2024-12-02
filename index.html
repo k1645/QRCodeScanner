@@ -13,14 +13,14 @@
   <script>
     async function sendQRCodeData(data) {
       try {
-	  alert("data"+data);
+	  alert("preapred data to send "+data);
         // Sending the decoded QR code data to the backend
-        const response = await fetch("http://172.20.10.9:3211/magikservices/api/qr/submit", {
+         const payload = JSON.stringify({ qrData: data });
+   	 alert("Payload:", payload);
+        const response = await fetch("http://172.20.10.9:8080/magikservices/api/qr/submit", {
           method: "POST",
-          headers: { "Content-Type": "text/plain;charset=UTF-8"},
-		  // "application/json" },
-          // body: JSON.stringify({ qrData: data }) // Sending the data as an object
-	  body:{ "qrData": "kavyashree"}
+          headers: { "Content-Type": "application/json" },
+          body: payload // Sending the data as an object
         });
         
         // Handle response from the backend
@@ -34,8 +34,8 @@
           alert("Failed to submit QR Code. Server returned: " + result);
         }
       } catch (error) {
-        alert("Error:", error);
-        alert("An error occurred while submitting the QR Code.",error.message);
+        alert(`Error occurred: ${error.message}`);
+	alert("Error occurred 2: " + error.message + " | Stack: " + error.stack);
       }
     }
 
